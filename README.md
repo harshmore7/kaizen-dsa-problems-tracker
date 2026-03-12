@@ -69,7 +69,7 @@ That's it. Docker handles everything else.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/kaizen.git
+git clone https://github.com/harshmore7/kaizen-dsa-problems-tracker.git
 cd kaizen
 ```
 
@@ -170,7 +170,7 @@ Use this if you want hot-reload for both frontend and backend while developing.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/kaizen.git
+git clone https://github.com/harshmore7/kaizen-dsa-problems-tracker.git
 cd kaizen
 ```
 
@@ -449,5 +449,3 @@ MIT License — free to use, modify and distribute.
   <strong>Built with 改善 — continuous improvement</strong><br/>
   <sub>Django · React · MySQL · Docker</sub>
 </div>
-
-superuser - root - admin123
