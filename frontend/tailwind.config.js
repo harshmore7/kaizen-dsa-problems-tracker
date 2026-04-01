@@ -1,13 +1,13 @@
-/** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        surface: '#0f0f0f',
-        panel:   '#161616',
-        border:  '#1f1f1f',
-        muted:   '#2a2a2a',
+        surface: 'var(--bg-surface)',
+        panel:   'var(--bg-panel)',
+        border:  'var(--bg-border)',
+        muted:   'var(--bg-muted)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

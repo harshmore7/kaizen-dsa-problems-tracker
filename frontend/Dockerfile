@@ -2,14 +2,18 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci --prefer-offline
 
 COPY . .
 
-# Increase Node memory to 4GB for monaco-editor build
-RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
+RUN NODE_OPTIONS="--max-old-space-size=1024" \
+    GENERATE_SOURCEMAP=false \
+    npm run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy as the MAIN nginx config, not conf.d
+COPY nginx.conf /etc/nginx/nginx.conf
+
 EXPOSE 80

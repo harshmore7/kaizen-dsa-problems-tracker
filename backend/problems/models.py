@@ -137,3 +137,21 @@ def calculate_next_review(ease_factor, interval, repetitions, quality):
 
     next_review = date.today() + timedelta(days=interval)
     return ease_factor, interval, repetitions, next_review
+
+
+# user profile model
+class UserProfile(models.Model):
+    leetcode_username   = models.CharField(max_length=100, blank=True)
+    gfg_username        = models.CharField(max_length=100, blank=True)
+    codeforces_username = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = "User Profile"
+
+    def __str__(self):
+        return f"Profile (LC:{self.leetcode_username} GFG:{self.gfg_username} CF:{self.codeforces_username})"
+
+    @classmethod
+    def get(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj

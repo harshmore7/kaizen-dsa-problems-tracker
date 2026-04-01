@@ -3,7 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     TopicViewSet, ProblemViewSet, SolutionViewSet,
     RevisionViewSet, FetchProblemView, UserStatsView,
-    ReviewQueueView, AnalyticsView
+    ReviewQueueView, AnalyticsView,
+    UserProfileView, PlatformStatsView
 )
 
 router = DefaultRouter()
@@ -17,4 +18,6 @@ urlpatterns = [
     path('stats/',         UserStatsView.as_view()),
     path('review-queue/', ReviewQueueView.as_view()),
     path('analytics/', AnalyticsView.as_view()),
+    path('profile/',          UserProfileView.as_view()),
+    path('profile/stats/',    PlatformStatsView.as_view()),
 ] + router.urls

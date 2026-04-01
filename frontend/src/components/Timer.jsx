@@ -1,25 +1,21 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import api from '../api'
 
 export default function Timer({ problem, onTimeSaved }) {
-  const [running,  setRunning]  = useState(false)
-  const [elapsed,  setElapsed]  = useState(0)
-  const [saved,    setSaved]    = useState(false)
+  const [running, setRunning] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+  const [saved,   setSaved]   = useState(false)
   const intervalRef = useRef(null)
-  const elapsedRef  = useRef(0)  // always up to date
+  const elapsedRef  = useRef(0)
 
-  // Keep ref in sync with state
   useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         const mins = Math.floor(elapsedRef.current / 60)
-        if (mins > 0) {
-          api.post(`/problems/${problem.id}/log_time/`, { minutes: mins })
-        }
+        if (mins > 0) api.post(`/problems/${problem.id}/log_time/`, { minutes: mins })
       }
     }
   }, [problem.id])
@@ -70,12 +66,11 @@ export default function Timer({ problem, onTimeSaved }) {
     : `${totalMins}m`
 
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-[#0d0d0d] border-b border-border">
+    <div className="flex items-center gap-4 px-5 py-3" style={{ background: 'var(--bg-panel)' }}>
 
       {/* Timer display */}
-      <div className={`font-mono text-2xl font-bold tabular-nums transition-colors ${
-        running ? 'text-green-400' : elapsed > 0 ? 'text-amber-400' : 'text-gray-600'
-      }`}>
+      <div className="font-mono text-xl font-bold tabular-nums transition-colors"
+        style={{ color: running ? '#22c55e' : elapsed > 0 ? '#f59e0b' : 'var(--text-muted)' }}>
         {fmt(elapsed)}
       </div>
 
@@ -103,7 +98,8 @@ export default function Timer({ problem, onTimeSaved }) {
         {elapsed > 0 && (
           <>
             <button onClick={handleSave}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 border border-border rounded-lg text-xs font-medium transition-all">
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border"
+              style={{ background: 'var(--bg-muted)', borderColor: 'var(--bg-border)', color: 'var(--text-secondary)' }}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                 <polyline points="17 21 17 13 7 13 7 21"/>
@@ -112,7 +108,8 @@ export default function Timer({ problem, onTimeSaved }) {
               Save {Math.ceil(elapsed/60)}m
             </button>
             <button onClick={reset}
-              className="p-1.5 text-gray-600 hover:text-gray-400 transition-colors rounded-lg hover:bg-white/5">
+              className="p-1.5 rounded-lg transition-colors"
+              style={{ color: 'var(--text-muted)' }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="1 4 1 10 7 10"/>
                 <path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
@@ -134,15 +131,15 @@ export default function Timer({ problem, onTimeSaved }) {
 
       {/* Total time */}
       {totalMins > 0 && (
-        <div className="ml-auto flex items-center gap-1.5 text-xs text-gray-600">
+        <div className="ml-auto flex items-center gap-1.5 text-xs"
+          style={{ color: 'var(--text-muted)' }}>
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
-          Total: <span className="text-gray-400 font-mono">{totalFmt}</span>
+          Total: <span className="font-mono" style={{ color: 'var(--text-secondary)' }}>{totalFmt}</span>
         </div>
       )}
-
     </div>
   )
 }

@@ -1,8 +1,10 @@
 from .scraper import fetch_problem_from_url
+import requests
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Topic, Problem, Solution, Revision, UserStats
+from .models import Topic, Problem, Solution, Revision, UserStats, UserProfile
+from .platform_stats import fetch_leetcode_stats, fetch_gfg_stats, fetch_codeforces_stats
 from .serializers import (
     TopicSerializer, ProblemSerializer,
     SolutionSerializer, RevisionSerializer,
@@ -310,4 +312,61 @@ class AnalyticsView(APIView):
                 'longest_streak':     stats.longest_streak,
                 'xp_in_current_level': stats.xp % 100,
             },
+        })
+    
+
+
+class UserProfileView(APIView):
+    def get(self, request):
+        profile = UserProfile.get()
+        from .serializers import UserProfileSerializer
+        return Response(UserProfileSerializer(profile).data)
+
+    def put(self, request):
+        profile = UserProfile.get()
+        from .serializers import UserProfileSerializer
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlatformStatsView(APIView):
+    def get(self, request):
+        profile = UserProfile.get()
+        lc = fetch_leetcode_stats(profile.leetcode_username)
+        gfg = fetch_gfg_stats(profile.gfg_username)
+        cf = fetch_codeforces_stats(profile.codeforces_username)
+
+        # Combined heatmap — merge LC + CF submission dates
+        heatmap = {}
+        try:
+            if profile.leetcode_username:
+                query = """
+                query recentAC($username: String!) {
+                    recentAcSubmissionList(username: $username, limit: 20) {
+                        timestamp
+                    }
+                }
+                """
+                res = requests.post(
+                    "https://leetcode.com/graphql",
+                    json={"query": query, "variables": {"username": profile.leetcode_username}},
+                    headers={"Content-Type": "application/json", "Referer": "https://leetcode.com",
+                             "User-Agent": "Mozilla/5.0"},
+                    timeout=10
+                )
+                from datetime import datetime
+                for s in res.json().get("data", {}).get("recentAcSubmissionList", []):
+                    day = datetime.fromtimestamp(int(s["timestamp"])).strftime("%Y-%m-%d")
+                    heatmap[day] = heatmap.get(day, 0) + 1
+        except Exception:
+            pass
+
+        return Response({
+            "leetcode":   lc,
+            "gfg":        gfg,
+            "codeforces": cf,
+            "heatmap":    heatmap,
         })

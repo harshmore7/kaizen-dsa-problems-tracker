@@ -1,20 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import Landing from './pages/Landing'
 import Problems from './pages/Problems'
 import Analytics from './pages/Analytics'
+import Profile from './pages/Profile'
 
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#0a0a0a] text-gray-200">
-        <Navbar />
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <Routes>
-            <Route path="/" element={<Problems />} />
-            <Route path="/analytics" element={<Analytics />} />
-          </Routes>
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/problems" element={<><Navbar /><Problems /></>} />
+        <Route path="/analytics" element={<><Navbar /><Analytics /></>} />
+        <Route path="/profile" element={<><Navbar /><Profile /></>} />
+      </Routes>
     </BrowserRouter>
   )
 }

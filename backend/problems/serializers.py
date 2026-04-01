@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Topic, Problem, Solution, Revision, UserStats
+from .models import Topic, Problem, Solution, Revision, UserProfile, UserStats
 
 
 class TopicSerializer(serializers.ModelSerializer):
@@ -55,3 +55,9 @@ class UserStatsSerializer(serializers.ModelSerializer):
 
     def get_xp_in_current_level(self, obj):
         return obj.xp % 100
+    
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = UserProfile
+        fields = '__all__'
